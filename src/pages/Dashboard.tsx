@@ -11,6 +11,13 @@ import {
 } from "@/components/ui/table";
 import { PlusCircle, Search } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface Client {
   id: number;
@@ -48,6 +55,7 @@ const Dashboard = () => {
     accountExec: "" 
   });
   const [searchQuery, setSearchQuery] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const handleAddClient = () => {
@@ -65,6 +73,7 @@ const Dashboard = () => {
       { ...newClient, id: clients.length + 1 },
     ]);
     setNewClient({ company: "", product: "", status: "", channel: "", accountExec: "" });
+    setDialogOpen(false);
     toast({
       title: "Success",
       description: "Client added successfully",
@@ -97,55 +106,68 @@ const Dashboard = () => {
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-sm">
-          <div className="flex gap-4 mb-8">
-            <Input
-              placeholder="Company"
-              value={newClient.company}
-              onChange={(e) =>
-                setNewClient({ ...newClient, company: e.target.value })
-              }
-            />
-            <Input
-              placeholder="Product"
-              value={newClient.product}
-              onChange={(e) =>
-                setNewClient({ ...newClient, product: e.target.value })
-              }
-            />
-            <Input
-              placeholder="Status"
-              value={newClient.status}
-              onChange={(e) =>
-                setNewClient({ ...newClient, status: e.target.value })
-              }
-            />
-            <Input
-              placeholder="Channel"
-              value={newClient.channel}
-              onChange={(e) =>
-                setNewClient({ ...newClient, channel: e.target.value })
-              }
-            />
-            <Input
-              placeholder="Account Executive"
-              value={newClient.accountExec}
-              onChange={(e) =>
-                setNewClient({ ...newClient, accountExec: e.target.value })
-              }
-            />
-            <Button onClick={handleAddClient}>
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Client
-            </Button>
-          </div>
-
-          <div className="mb-4 relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Search clients..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
+          <div className="flex justify-between items-center mb-8">
+            <div className="relative w-96">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Search clients..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <PlusCircle className="mr-2 h-4 w-4" /> Add Client
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Add New Client</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <Input
+                    placeholder="Company"
+                    value={newClient.company}
+                    onChange={(e) =>
+                      setNewClient({ ...newClient, company: e.target.value })
+                    }
+                  />
+                  <Input
+                    placeholder="Product"
+                    value={newClient.product}
+                    onChange={(e) =>
+                      setNewClient({ ...newClient, product: e.target.value })
+                    }
+                  />
+                  <Input
+                    placeholder="Status"
+                    value={newClient.status}
+                    onChange={(e) =>
+                      setNewClient({ ...newClient, status: e.target.value })
+                    }
+                  />
+                  <Input
+                    placeholder="Channel"
+                    value={newClient.channel}
+                    onChange={(e) =>
+                      setNewClient({ ...newClient, channel: e.target.value })
+                    }
+                  />
+                  <Input
+                    placeholder="Account Executive"
+                    value={newClient.accountExec}
+                    onChange={(e) =>
+                      setNewClient({ ...newClient, accountExec: e.target.value })
+                    }
+                  />
+                  <Button onClick={handleAddClient} className="w-full">
+                    Add Client
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
 
           <Table>
