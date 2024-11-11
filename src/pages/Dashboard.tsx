@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Search } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 interface Client {
@@ -35,6 +35,7 @@ const Dashboard = () => {
     },
   ]);
   const [newClient, setNewClient] = useState({ name: "", email: "", phone: "" });
+  const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
 
   const handleAddClient = () => {
@@ -65,6 +66,13 @@ const Dashboard = () => {
       description: "Client deleted successfully",
     });
   };
+
+  const filteredClients = clients.filter((client) =>
+    Object.values(client)
+      .join(" ")
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -105,6 +113,16 @@ const Dashboard = () => {
             </Button>
           </div>
 
+          <div className="mb-4 relative">
+            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+            <Input
+              placeholder="Search clients..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
           <Table>
             <TableHeader>
               <TableRow>
@@ -115,7 +133,7 @@ const Dashboard = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {clients.map((client) => (
+              {filteredClients.map((client) => (
                 <TableRow key={client.id}>
                   <TableCell>{client.name}</TableCell>
                   <TableCell>{client.email}</TableCell>
