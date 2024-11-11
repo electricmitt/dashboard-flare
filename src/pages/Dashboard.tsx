@@ -14,32 +14,44 @@ import { useToast } from "@/components/ui/use-toast";
 
 interface Client {
   id: number;
-  name: string;
-  email: string;
-  phone: string;
+  company: string;
+  product: string;
+  status: string;
+  channel: string;
+  accountExec: string;
 }
 
 const Dashboard = () => {
   const [clients, setClients] = useState<Client[]>([
     {
       id: 1,
-      name: "John Doe",
-      email: "john@example.com",
-      phone: "(555) 123-4567",
+      company: "Acme Corp",
+      product: "Enterprise Suite",
+      status: "Active",
+      channel: "Direct",
+      accountExec: "John Smith",
     },
     {
       id: 2,
-      name: "Jane Smith",
-      email: "jane@example.com",
-      phone: "(555) 987-6543",
+      company: "TechStart Inc",
+      product: "Basic Plan",
+      status: "Pending",
+      channel: "Partner",
+      accountExec: "Sarah Johnson",
     },
   ]);
-  const [newClient, setNewClient] = useState({ name: "", email: "", phone: "" });
+  const [newClient, setNewClient] = useState({ 
+    company: "", 
+    product: "", 
+    status: "", 
+    channel: "", 
+    accountExec: "" 
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
 
   const handleAddClient = () => {
-    if (!newClient.name || !newClient.email || !newClient.phone) {
+    if (!newClient.company || !newClient.product || !newClient.status || !newClient.channel || !newClient.accountExec) {
       toast({
         title: "Error",
         description: "Please fill in all fields",
@@ -52,7 +64,7 @@ const Dashboard = () => {
       ...clients,
       { ...newClient, id: clients.length + 1 },
     ]);
-    setNewClient({ name: "", email: "", phone: "" });
+    setNewClient({ company: "", product: "", status: "", channel: "", accountExec: "" });
     toast({
       title: "Success",
       description: "Client added successfully",
@@ -87,25 +99,38 @@ const Dashboard = () => {
         <div className="bg-white p-6 rounded-lg shadow-sm">
           <div className="flex gap-4 mb-8">
             <Input
-              placeholder="Name"
-              value={newClient.name}
+              placeholder="Company"
+              value={newClient.company}
               onChange={(e) =>
-                setNewClient({ ...newClient, name: e.target.value })
+                setNewClient({ ...newClient, company: e.target.value })
               }
             />
             <Input
-              placeholder="Email"
-              type="email"
-              value={newClient.email}
+              placeholder="Product"
+              value={newClient.product}
               onChange={(e) =>
-                setNewClient({ ...newClient, email: e.target.value })
+                setNewClient({ ...newClient, product: e.target.value })
               }
             />
             <Input
-              placeholder="Phone"
-              value={newClient.phone}
+              placeholder="Status"
+              value={newClient.status}
               onChange={(e) =>
-                setNewClient({ ...newClient, phone: e.target.value })
+                setNewClient({ ...newClient, status: e.target.value })
+              }
+            />
+            <Input
+              placeholder="Channel"
+              value={newClient.channel}
+              onChange={(e) =>
+                setNewClient({ ...newClient, channel: e.target.value })
+              }
+            />
+            <Input
+              placeholder="Account Executive"
+              value={newClient.accountExec}
+              onChange={(e) =>
+                setNewClient({ ...newClient, accountExec: e.target.value })
               }
             />
             <Button onClick={handleAddClient}>
@@ -126,18 +151,22 @@ const Dashboard = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Phone</TableHead>
+                <TableHead>Company</TableHead>
+                <TableHead>Product</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Channel</TableHead>
+                <TableHead>Account Executive</TableHead>
                 <TableHead className="w-[100px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredClients.map((client) => (
                 <TableRow key={client.id}>
-                  <TableCell>{client.name}</TableCell>
-                  <TableCell>{client.email}</TableCell>
-                  <TableCell>{client.phone}</TableCell>
+                  <TableCell>{client.company}</TableCell>
+                  <TableCell>{client.product}</TableCell>
+                  <TableCell>{client.status}</TableCell>
+                  <TableCell>{client.channel}</TableCell>
+                  <TableCell>{client.accountExec}</TableCell>
                   <TableCell>
                     <Button
                       variant="destructive"
