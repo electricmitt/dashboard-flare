@@ -7,6 +7,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Pen, Trash } from "lucide-react";
+import { toast } from "sonner";
 
 interface Client {
   id: number;
@@ -24,6 +32,11 @@ interface ClientTableProps {
 }
 
 export function ClientTable({ clients, onDeleteClient, onEditClient }: ClientTableProps) {
+  const handleDelete = (id: number, company: string) => {
+    onDeleteClient(id);
+    toast(`Deleted ${company}`);
+  };
+
   return (
     <Table>
       <TableHeader>
@@ -33,7 +46,7 @@ export function ClientTable({ clients, onDeleteClient, onEditClient }: ClientTab
           <TableHead>Status</TableHead>
           <TableHead>Channel</TableHead>
           <TableHead>Account Executive</TableHead>
-          <TableHead className="w-[100px]">Actions</TableHead>
+          <TableHead className="w-[50px]">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -49,16 +62,36 @@ export function ClientTable({ clients, onDeleteClient, onEditClient }: ClientTab
             <TableCell>{client.channel}</TableCell>
             <TableCell>{client.accountExec}</TableCell>
             <TableCell>
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDeleteClient(client.id);
-                }}
-              >
-                Delete
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Pen className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem onClick={(e) => {
+                    e.stopPropagation();
+                    onEditClient(client);
+                  }}>
+                    <Pen className="mr-2 h-4 w-4" />
+                    Edit
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="text-destructive"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(client.id, client.company);
+                    }}
+                  >
+                    <Trash className="mr-2 h-4 w-4" />
+                    Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </TableCell>
           </TableRow>
         ))}
