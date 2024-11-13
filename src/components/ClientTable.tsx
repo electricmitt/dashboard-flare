@@ -13,16 +13,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { ArrowUpDown, Pen, Trash } from "lucide-react";
 import { toast } from "sonner";
 import { useState, useMemo } from "react";
+import { ClientFilters } from "./ClientFilters";
 
 interface Client {
   id: number;
@@ -46,9 +40,9 @@ export function ClientTable({ clients, onDeleteClient, onEditClient }: ClientTab
   }>({ key: null, direction: 'asc' });
   
   const [filters, setFilters] = useState({
-    product: '',
-    status: '',
-    accountExec: ''
+    product: 'all',
+    status: 'all',
+    accountExec: 'all'
   });
 
   const handleSort = (key: keyof Client) => {
@@ -63,6 +57,10 @@ export function ClientTable({ clients, onDeleteClient, onEditClient }: ClientTab
     toast(`Deleted ${company}`);
   };
 
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
   const uniqueProducts = useMemo(() => [...new Set(clients.map(client => client.product))], [clients]);
   const uniqueStatuses = useMemo(() => [...new Set(clients.map(client => client.status))], [clients]);
   const uniqueExecs = useMemo(() => [...new Set(clients.map(client => client.accountExec))], [clients]);
@@ -71,13 +69,13 @@ export function ClientTable({ clients, onDeleteClient, onEditClient }: ClientTab
     let result = [...clients];
 
     // Apply filters
-    if (filters.product) {
+    if (filters.product !== 'all') {
       result = result.filter(client => client.product === filters.product);
     }
-    if (filters.status) {
+    if (filters.status !== 'all') {
       result = result.filter(client => client.status === filters.status);
     }
-    if (filters.accountExec) {
+    if (filters.accountExec !== 'all') {
       result = result.filter(client => client.accountExec === filters.accountExec);
     }
 
@@ -97,43 +95,13 @@ export function ClientTable({ clients, onDeleteClient, onEditClient }: ClientTab
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4">
-        <Select value={filters.product} onValueChange={(value) => setFilters(prev => ({ ...prev, product: value }))}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Filter by Product" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">All Products</SelectItem>
-            {uniqueProducts.map(product => (
-              <SelectItem key={product} value={product}>{product}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Filter by Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">All Statuses</SelectItem>
-            {uniqueStatuses.map(status => (
-              <SelectItem key={status} value={status}>{status}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select value={filters.accountExec} onValueChange={(value) => setFilters(prev => ({ ...prev, accountExec: value }))}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Filter by Account Executive" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">All Account Executives</SelectItem>
-            {uniqueExecs.map(exec => (
-              <SelectItem key={exec} value={exec}>{exec}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <ClientFilters
+        filters={filters}
+        uniqueProducts={uniqueProducts}
+        uniqueStatuses={uniqueStatuses}
+        uniqueExecs={uniqueExecs}
+        onFilterChange={handleFilterChange}
+      />
 
       <Table>
         <TableHeader>
