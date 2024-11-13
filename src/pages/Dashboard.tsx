@@ -1,16 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { PlusCircle, Search } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +10,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ClientTable } from "@/components/ClientTable";
+import { ClientDialog } from "@/components/ClientDialog";
 
 interface Client {
   id: number;
@@ -47,6 +41,7 @@ const Dashboard = () => {
       accountExec: "Sarah Johnson",
     },
   ]);
+  
   const [newClient, setNewClient] = useState({ 
     company: "", 
     product: "", 
@@ -54,17 +49,15 @@ const Dashboard = () => {
     channel: "", 
     accountExec: "" 
   });
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { toast } = useToast();
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const handleAddClient = () => {
     if (!newClient.company || !newClient.product || !newClient.status || !newClient.channel || !newClient.accountExec) {
-      toast({
-        title: "Error",
-        description: "Please fill in all fields",
-        variant: "destructive",
-      });
+      toast("Please fill in all fields");
       return;
     }
 
@@ -74,18 +67,23 @@ const Dashboard = () => {
     ]);
     setNewClient({ company: "", product: "", status: "", channel: "", accountExec: "" });
     setDialogOpen(false);
-    toast({
-      title: "Success",
-      description: "Client added successfully",
-    });
+    toast("Client added successfully");
   };
 
   const handleDeleteClient = (id: number) => {
     setClients(clients.filter((client) => client.id !== id));
-    toast({
-      title: "Success",
-      description: "Client deleted successfully",
-    });
+    toast("Client deleted successfully");
+  };
+
+  const handleEditClient = (client: Client) => {
+    setSelectedClient(client);
+    setEditDialogOpen(true);
+  };
+
+  const handleSaveClient = (updatedClient: Client) => {
+    setClients(clients.map((client) => 
+      client.id === updatedClient.id ? updatedClient : client
+    ));
   };
 
   const filteredClients = clients.filter((client) =>
@@ -170,40 +168,22 @@ const Dashboard = () => {
             </Dialog>
           </div>
 
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Company</TableHead>
-                <TableHead>Product</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Channel</TableHead>
-                <TableHead>Account Executive</TableHead>
-                <TableHead className="w-[100px]">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredClients.map((client) => (
-                <TableRow key={client.id}>
-                  <TableCell>{client.company}</TableCell>
-                  <TableCell>{client.product}</TableCell>
-                  <TableCell>{client.status}</TableCell>
-                  <TableCell>{client.channel}</TableCell>
-                  <TableCell>{client.accountExec}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDeleteClient(client.id)}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <ClientTable 
+            clients={filteredClients}
+            onDeleteClient={handleDeleteClient}
+            onEditClient={handleEditClient}
+          />
         </div>
       </div>
+
+      {selectedClient && (
+        <ClientDialog
+          client={selectedClient}
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          onSave={handleSaveClient}
+        />
+      )}
     </div>
   );
 };
