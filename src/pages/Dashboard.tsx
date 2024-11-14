@@ -97,7 +97,8 @@ const Dashboard = () => {
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto space-y-8">
         <div>
-          <h1 className="text-3xl font-bold">Asphere Client DB</h1>
+          <h1 className="text-3xl font-bold">Asphere Client Database</h1>
+          <p className="text-muted-foreground mt-2">Client Management</p>
         </div>
 
         <div className="bg-white p-6 rounded-lg shadow-sm">
