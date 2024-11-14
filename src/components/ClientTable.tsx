@@ -124,19 +124,23 @@ export function ClientTable({ clients, onDeleteClient, onEditClient }: ClientTab
               <span className={`inline-flex items-center justify-center w-20 px-2 py-1 rounded-full ring-2 ${getStatusColor(client.status)}`}>
                 {client.status}
               </span>
-              {client.startDate && client.endDate && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info className="h-4 w-4 text-muted-foreground cursor-help" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Start: {client.startDate}</p>
-                      <p>End: {client.endDate}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {client.startDate && client.endDate ? (
+                      <>
+                        <p>Start: {client.startDate}</p>
+                        <p>End: {client.endDate}</p>
+                      </>
+                    ) : (
+                      <p>No contract dates available</p>
+                    )}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </TableCell>
             <TableCell>{client.channel}</TableCell>
             <TableCell>{client.accountExec}</TableCell>
