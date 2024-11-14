@@ -13,9 +13,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ArrowUpDown, Pen, Trash } from "lucide-react";
+import { Info, Pen, Trash } from "lucide-react";
 import { toast } from "sonner";
 import { useState, useMemo } from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Client {
   id: number;
@@ -24,6 +30,10 @@ interface Client {
   status: string;
   channel: string;
   accountExec: string;
+  startDate?: string;
+  endDate?: string;
+  dealAmount?: number;
+  monthlyVolume?: number;
 }
 
 interface ClientTableProps {
@@ -31,6 +41,19 @@ interface ClientTableProps {
   onDeleteClient: (id: number) => void;
   onEditClient: (client: Client) => void;
 }
+
+const getStatusColor = (status: string) => {
+  switch (status.toLowerCase()) {
+    case 'active':
+      return 'ring-success';
+    case 'inactive':
+      return 'ring-destructive';
+    case 'pending':
+      return 'ring-yellow-500';
+    default:
+      return 'ring-gray-300';
+  }
+};
 
 export function ClientTable({ clients, onDeleteClient, onEditClient }: ClientTableProps) {
   const [sortConfig, setSortConfig] = useState<{
@@ -71,19 +94,19 @@ export function ClientTable({ clients, onDeleteClient, onEditClient }: ClientTab
       <TableHeader>
         <TableRow>
           <TableHead onClick={() => handleSort('company')} className="cursor-pointer">
-            Company <ArrowUpDown className="inline h-4 w-4" />
+            Company
           </TableHead>
           <TableHead onClick={() => handleSort('product')} className="cursor-pointer">
-            Product <ArrowUpDown className="inline h-4 w-4" />
+            Product
           </TableHead>
           <TableHead onClick={() => handleSort('status')} className="cursor-pointer">
-            Status <ArrowUpDown className="inline h-4 w-4" />
+            Status
           </TableHead>
           <TableHead onClick={() => handleSort('channel')} className="cursor-pointer">
-            Channel <ArrowUpDown className="inline h-4 w-4" />
+            Channel
           </TableHead>
           <TableHead onClick={() => handleSort('accountExec')} className="cursor-pointer">
-            Account Executive <ArrowUpDown className="inline h-4 w-4" />
+            Account Executive
           </TableHead>
           <TableHead className="w-[50px]">Actions</TableHead>
         </TableRow>
@@ -97,7 +120,24 @@ export function ClientTable({ clients, onDeleteClient, onEditClient }: ClientTab
           >
             <TableCell>{client.company}</TableCell>
             <TableCell>{client.product}</TableCell>
-            <TableCell>{client.status}</TableCell>
+            <TableCell className="flex items-center gap-2">
+              <span className={`inline-block px-2 py-1 rounded-full ring-2 ${getStatusColor(client.status)}`}>
+                {client.status}
+              </span>
+              {client.startDate && client.endDate && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info className="h-4 w-4 text-muted-foreground" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Start: {client.startDate}</p>
+                      <p>End: {client.endDate}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+            </TableCell>
             <TableCell>{client.channel}</TableCell>
             <TableCell>{client.accountExec}</TableCell>
             <TableCell>
