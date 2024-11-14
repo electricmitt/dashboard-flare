@@ -45,13 +45,13 @@ interface ClientTableProps {
 const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
     case 'active':
-      return 'ring-success';
+      return 'bg-success/20 ring-success';
     case 'inactive':
-      return 'ring-destructive';
+      return 'bg-destructive/20 ring-destructive';
     case 'pending':
-      return 'ring-yellow-500';
+      return 'bg-yellow-500/20 ring-yellow-500';
     default:
-      return 'ring-gray-300';
+      return 'bg-gray-300/20 ring-gray-300';
   }
 };
 
@@ -121,14 +121,14 @@ export function ClientTable({ clients, onDeleteClient, onEditClient }: ClientTab
             <TableCell>{client.company}</TableCell>
             <TableCell>{client.product}</TableCell>
             <TableCell className="flex items-center gap-2">
-              <span className={`inline-block px-2 py-1 rounded-full ring-2 ${getStatusColor(client.status)}`}>
+              <span className={`inline-flex items-center justify-center w-20 px-2 py-1 rounded-full ring-2 ${getStatusColor(client.status)}`}>
                 {client.status}
               </span>
               {client.startDate && client.endDate && (
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>
-                      <Info className="h-4 w-4 text-muted-foreground" />
+                    <TooltipTrigger asChild>
+                      <Info className="h-4 w-4 text-muted-foreground cursor-help" />
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>Start: {client.startDate}</p>
